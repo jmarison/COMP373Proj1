@@ -1,5 +1,4 @@
-<<<<<<< HEAD:src/java/Main.java
-=======
+
 /**
  * Entry point and CLI for the Mars Rover Kata.
  *
@@ -14,8 +13,6 @@
  *   - Assumes Rover exposes Direction and Turn enums and a public position[].
  */
 
-
->>>>>>> 4dcbcbe786d2bc1ecbb03ad20f72af254a4b9aec:src/Main.java
 
 public class Main {
 	public static void main(String[] args){
