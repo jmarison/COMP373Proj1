@@ -40,12 +40,12 @@ public class Main {
         panel.add(new JLabel());
         panel.add(runButton);
 		
-		//JTextArea outputArea = new JTextArea();
-        //outputArea.setEditable(false);
-        //JScrollPane scrollPane = new JScrollPane(outputArea);
+		JTextArea outputArea = new JTextArea();
+        outputArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(outputArea);
 
 		frame.add(panel, BorderLayout.NORTH);
-       // frame.add(scrollPane, BorderLayout.CENTER);
+        frame.add(scrollPane, BorderLayout.CENTER);
 		//plateauPanel = new PlateauPanel();
         //frame.add(plateauPanel, BorderLayout.CENTER);
 
@@ -56,10 +56,12 @@ public class Main {
 			
 			try {
                 String[] plateauParts = plateauText.split("\\s+");
+				if (plateauParts.length != 2) throw new IllegalArgumentException("Plateau must have two numbers.");
                 int maxX = Integer.parseInt(plateauParts[0]);
                 int maxY = Integer.parseInt(plateauParts[1]);
 
                 String[] parts = posText.split("\\s+");
+				if (parts.length != 3) throw new IllegalArgumentException("Rover position must be in format 'X Y D'.");
                 int x = Integer.parseInt(parts[0]);
                 int y = Integer.parseInt(parts[1]);
                 String dirStr = parts[2].toUpperCase();
@@ -70,14 +72,15 @@ public class Main {
                     case "E": dir = Rover.Direction.EAST; break;
                     case "S": dir = Rover.Direction.SOUTH; break;
                     case "W": dir = Rover.Direction.WEST; break;
-                    default: throw new IllegalArgumentException("Unknown direction");
+                    default: throw new IllegalArgumentException("Unknown direction: " + dirStr);
                 }
 			Rover rover = new Rover(x, y, dir);
             executeCommands(rover, cmdText, maxX, maxY);
-            //outputArea.append("Rover final position: " + rover + "\n");
+            outputArea.append("Rover final position: " + rover + "\n");
 			 } catch (Exception ex) {
-                JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(),
-                        "Input Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(frame,
+				 "Error: " + ex.getMessage(),
+                 "Input Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 	 frame.setVisible(true);
