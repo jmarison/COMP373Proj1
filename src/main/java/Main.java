@@ -8,7 +8,7 @@ import java.awt.event.*;
  *   - Read plateau dimensions from stdin.
  *   - Read pairs of lines for each rover (initial position/direction, then commands).
  *   - Instantiate a Rover and execute its commands.
- *   - Print each rover's final state.
+ *   - Print each rover's final state
  *
  * Notes:
  *   - Keeps paring/IO concerns here and delegates movement/turning to Rover.
