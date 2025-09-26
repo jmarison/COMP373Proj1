@@ -82,7 +82,7 @@ public class Main {
 			System.out.println(rover);
 		}
 
-		// Clean up resources...
+		// Clean up resources....
 		scanner.close();
 	}
 
