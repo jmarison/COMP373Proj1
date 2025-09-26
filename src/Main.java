@@ -43,20 +43,24 @@ public class Main {
 			if(posLine.isEmpty()) continue;					// Skip blank lines between rover blocks
 
 			if(!scanner.hasNextLine()){
+				// If we got a position but no command line, that's an input error...
 				System.err.println("Expected command line after position");
 				break;
 			}
-			String cmdLine = scanner.nextLine().trim();
+			String cmdLine = scanner.nextLine().trim();		// Line 2: command string
 
+			// Parse initial rover state...
 			String[] parts = posLine.split("\\s+");
 			if(parts.length < 3){
 				System.err.println("Invalid rover position");
-				continue;
+				continue;  // Skip this rover and try to read the next pair
 			}
 
 			int x = Integer.parseInt(parts[0]);
 			int y = Integer.parseInt(parts[1]);
-			String d = parts[2].toUpperCase();
+			String d = parts[2].toUpperCase();		// Normalize direction to uppercase
+
+			// Map the single-letter direction to Rover.Direction enum
 			Rover.Direction dir;
 			switch(d){
 				case "N": dir = Rover.Direction.NORTH; break;
@@ -65,7 +69,7 @@ public class Main {
 				case "W": dir = Rover.Direction.WEST; break;
 				default:
 					System.err.println("Unknown direction");
-					continue;
+					continue;  // Skip invalid rover declarations
 			}
 
 			Rover rover = new Rover(x, y, dir);
