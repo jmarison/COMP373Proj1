@@ -72,10 +72,17 @@ public class Main {
 					continue;  // Skip invalid rover declarations
 			}
 
+			// Create the rover at the requested starting pose
 			Rover rover = new Rover(x, y, dir);
+
+			// Execute the provided command sequence, enforcing plateau bounds
 			executeCommands(rover, cmdLine, maxX, maxY);
+
+			// Print rover's final state (relies on Rover.toString())
 			System.out.println(rover);
 		}
+
+		// Clean up resources...
 		scanner.close();
 	}
 
