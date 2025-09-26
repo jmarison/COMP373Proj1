@@ -1,25 +1,46 @@
+/**
+ * Entry point and CLI for the Mars Rover Kata.
+ *
+ * Responsibilities:
+ *   - Read plateau dimensions from stdin.
+ *   - Read pairs of lines for each rover (initial position/direction, then commands).
+ *   - Instantiate a Rover and execute its commands.
+ *   - Print each rover's final state.
+ *
+ * Notes:
+ *   - Keeps paring/IO concerns here and delegates movement/turning to Rover.
+ *   - Assumes Rover exposes Direction and Turn enums and a public position[].
+ */
+
+
+
 public class Main {
 	public static void main(String[] args){
+		// Scanner for reading all user input from standard input...
 		java.util.Scanner scanner = new java.util.Scanner(System.in);
 
+		// Plateau Setup...
 		System.out.println("Enter plateau upper-right coordinates (for example: \"5 5\"):");
 		String plateauLine = scanner.nextLine().trim();
 		String[] plateauParts = plateauLine.split("\\s+");
 		if(plateauParts.length < 2){
 			System.err.println("Invalid plateau size");
-			return;
+			return; // Abort if the plateau cannot be parsed.
 		}
+		// Upper-right corner (0,0) is implied as the lower-left...
 		int maxX = Integer.parseInt(plateauParts[0]);
 		int maxY = Integer.parseInt(plateauParts[1]);
 
+		// Input instructions for users...
 		System.out.println("Enter rover positions and commands. For each rover, provide two lines:\n" +
 				"1) initial position and direction (for example: \"1 2 N\")\n" +
 				"2) instructions for rover (for example: \"LMLMLMLMM\").\n");
 
+		// Process rovers until input ends...
 		while(true){
-			if(!scanner.hasNextLine()) break;
-			String posLine = scanner.nextLine().trim();
-			if(posLine.isEmpty()) continue;
+			if(!scanner.hasNextLine()) break;				// Stop on EOF
+			String posLine = scanner.nextLine().trim();		// Line 1: Initial position & direction
+			if(posLine.isEmpty()) continue;					// Skip blank lines between rover blocks
 
 			if(!scanner.hasNextLine()){
 				System.err.println("Expected command line after position");
