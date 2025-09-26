@@ -77,6 +77,10 @@ public class Main {
 			Rover rover = new Rover(x, y, dir);
             executeCommands(rover, cmdText, maxX, maxY);
             outputArea.append("Rover final position: " + rover + "\n");
+            plateauField.setText("");
+            roverPosField.setText("");
+            roverCmdField.setText("");
+            
 			 } catch (Exception ex) {
                 JOptionPane.showMessageDialog(frame,
 				 "Error: " + ex.getMessage(),
