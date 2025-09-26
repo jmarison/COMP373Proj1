@@ -98,11 +98,7 @@ public class Main {
 					rover.turn(Rover.Turn.RIGHT);
 					break;
 				case 'M':
-					rover.move();
-					if(rover.position[0] < 0) rover.position[0] = 0;
-					if(rover.position[1] < 0) rover.position[1] = 0;
-					if(rover.position[0] > maxX) rover.position[0] = maxX;
-					if(rover.position[1] > maxY) rover.position[1] = maxY;
+					rover.move(maxX, maxY);
 					break;
 			}
 		}
