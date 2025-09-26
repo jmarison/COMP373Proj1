@@ -1,4 +1,6 @@
-
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 /**
  * Entry point and CLI for the Mars Rover Kata.
  *
@@ -13,79 +15,73 @@
  *   - Assumes Rover exposes Direction and Turn enums and a public position[].
  */
 
-
 public class Main {
 	public static void main(String[] args){
-		// Scanner for reading all user input from standard input...
-		java.util.Scanner scanner = new java.util.Scanner(System.in);
 
-		// Plateau Setup...
-		System.out.println("Enter plateau upper-right coordinates (for example: \"5 5\"):");
-		String plateauLine = scanner.nextLine().trim();
-		String[] plateauParts = plateauLine.split("\\s+");
-		if(plateauParts.length < 2){
-			System.err.println("Invalid plateau size");
-			return; // Abort if the plateau cannot be parsed.
-		}
-		// Upper-right corner (0,0) is implied as the lower-left...
-		int maxX = Integer.parseInt(plateauParts[0]);
-		int maxY = Integer.parseInt(plateauParts[1]);
+		JFrame frame = new JFrame("Mars Rover");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(1080, 720);
+		frame.setLayout(new BorderLayout());
 
-		// Input instructions for users...
-		System.out.println("Enter rover positions and commands. For each rover, provide two lines:\n" +
-				"1) initial position and direction (for example: \"1 2 N\")\n" +
-				"2) instructions for rover (for example: \"LMLMLMLMM\").\n");
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout(4, 2, 5, 5));
 
-		// Process rovers until input ends...
-		while(true){
-			if(!scanner.hasNextLine()) break;				// Stop on EOF
-			String posLine = scanner.nextLine().trim();		// Line 1: Initial position & direction
-			if(posLine.isEmpty()) continue;					// Skip blank lines between rover blocks
+		JTextField plateauField = new JTextField();
+        JTextField roverPosField = new JTextField();
+        JTextField roverCmdField = new JTextField();
+        JButton runButton = new JButton("Run Commands");
 
-			if(!scanner.hasNextLine()){
-				// If we got a position but no command line, that's an input error...
-				System.err.println("Expected command line after position");
-				break;
-			}
-			String cmdLine = scanner.nextLine().trim();		// Line 2: command string
+		panel.add(new JLabel("Plateau upper-right (e.g., 5 5):"));
+        panel.add(plateauField);
+        panel.add(new JLabel("Rover position & direction (e.g., 1 2 N):"));
+        panel.add(roverPosField);
+        panel.add(new JLabel("Rover commands (e.g., LMLMRLMLMRM):"));
+        panel.add(roverCmdField);
+        panel.add(new JLabel());
+        panel.add(runButton);
+		
+		//JTextArea outputArea = new JTextArea();
+        //outputArea.setEditable(false);
+        //JScrollPane scrollPane = new JScrollPane(outputArea);
 
-			// Parse initial rover state...
-			String[] parts = posLine.split("\\s+");
-			if(parts.length < 3){
-				System.err.println("Invalid rover position");
-				continue;  // Skip this rover and try to read the next pair
-			}
+		frame.add(panel, BorderLayout.NORTH);
+       // frame.add(scrollPane, BorderLayout.CENTER);
+		//plateauPanel = new PlateauPanel();
+        //frame.add(plateauPanel, BorderLayout.CENTER);
 
-			int x = Integer.parseInt(parts[0]);
-			int y = Integer.parseInt(parts[1]);
-			String d = parts[2].toUpperCase();		// Normalize direction to uppercase
+		runButton.addActionListener(e -> {
+            String plateauText = plateauField.getText().trim();
+            String posText = roverPosField.getText().trim();
+            String cmdText = roverCmdField.getText().trim();
+			
+			try {
+                String[] plateauParts = plateauText.split("\\s+");
+                int maxX = Integer.parseInt(plateauParts[0]);
+                int maxY = Integer.parseInt(plateauParts[1]);
 
-			// Map the single-letter direction to Rover.Direction enum
-			Rover.Direction dir;
-			switch(d){
-				case "N": dir = Rover.Direction.NORTH; break;
-				case "E": dir = Rover.Direction.EAST; break;
-				case "S": dir = Rover.Direction.SOUTH; break;
-				case "W": dir = Rover.Direction.WEST; break;
-				default:
-					System.err.println("Unknown direction");
-					continue;  // Skip invalid rover declarations
-			}
+                String[] parts = posText.split("\\s+");
+                int x = Integer.parseInt(parts[0]);
+                int y = Integer.parseInt(parts[1]);
+                String dirStr = parts[2].toUpperCase();
 
-			// Create the rover at the requested starting pose
+                Rover.Direction dir;
+                switch (dirStr) {
+					case "N": dir = Rover.Direction.NORTH; break;
+                    case "E": dir = Rover.Direction.EAST; break;
+                    case "S": dir = Rover.Direction.SOUTH; break;
+                    case "W": dir = Rover.Direction.WEST; break;
+                    default: throw new IllegalArgumentException("Unknown direction");
+                }
 			Rover rover = new Rover(x, y, dir);
-
-			// Execute the provided command sequence, enforcing plateau bounds
-			executeCommands(rover, cmdLine, maxX, maxY);
-
-			// Print rover's final state (relies on Rover.toString())
-			System.out.println(rover);
-		}
-
-		// Clean up resources......
-		scanner.close();
+            executeCommands(rover, cmdText, maxX, maxY);
+            //outputArea.append("Rover final position: " + rover + "\n");
+			 } catch (Exception ex) {
+                JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(),
+                        "Input Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+	 frame.setVisible(true);
 	}
-
 
 
 	public static void executeCommands(Rover rover, String commands, int maxX, int maxY){
@@ -103,5 +99,7 @@ public class Main {
 			}
 		}
 	}
+
+	
 
 }
