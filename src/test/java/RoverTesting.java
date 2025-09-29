@@ -8,12 +8,20 @@ public class RoverTesting {
     int maxX = 5;
     int maxY = 5;
 
-    // test 1, test left and right turn
+    // test 1, test left
     @Test
-    void testTurn() {
+    void testTurnLeft() {
         Rover rover = new Rover(0, 0, Rover.Direction.NORTH);
         rover.turn(Rover.Turn.LEFT);
         Assertions.assertEquals(Rover.Direction.WEST, rover.directionfacing);
+    }
+
+    // test 1a test right turn
+    @Test
+    void testTurnRight() {
+        Rover rover = new Rover(0, 0, Rover.Direction.NORTH);
+        rover.turn(Rover.Turn.RIGHT);
+        Assertions.assertEquals(Rover.Direction.EAST, rover.directionfacing);
     }
 
     // test 2, ensure rover cannot leave bounds
@@ -41,6 +49,7 @@ public class RoverTesting {
         Assertions.assertEquals(2, rover.position[1]);
     }
 
+    // tests the behaviors when rover attempts to leave bounds
     @Test
     void edgeOfBounds() {
         Rover rover = new Rover(5, 5, Rover.Direction.NORTH);
