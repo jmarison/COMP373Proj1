@@ -24,8 +24,6 @@ class PlateauPanel extends JPanel {
         super.paintComponent(g);
 
         int cellSize = Math.min(getWidth() / (maxX + 1), getHeight() / (maxY + 1));
-
-        // Draw grid
         g.setColor(Color.LIGHT_GRAY);
         for (int i = 0; i <= maxX + 1; i++) {
             g.drawLine(i * cellSize, 0, i * cellSize, (maxY + 1) * cellSize);
@@ -34,7 +32,6 @@ class PlateauPanel extends JPanel {
             g.drawLine(0, j * cellSize, (maxX + 1) * cellSize, j * cellSize);
         }
 
-        // Draw path
         g.setColor(Color.BLUE);
         for (int i = 0; i < path.size() - 1; i++) {
             Point p = path.get(i);
@@ -43,7 +40,7 @@ class PlateauPanel extends JPanel {
             g.fillOval(drawX + cellSize / 4, drawY + cellSize / 4, cellSize / 2, cellSize / 2);
         }
 
-        // Draw rover’s final position + direction
+        // draw rovers final position and direction
         if (!path.isEmpty() && finalDir != null) {
             Point last = path.get(path.size() - 1);
             int cx = last.x * cellSize + cellSize / 2;
