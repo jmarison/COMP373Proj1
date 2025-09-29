@@ -1,3 +1,6 @@
+*** EC GUI IMPLEMNTED ***
+
+
 # The Mars Rover Kata
 
 Research suggests that the original version of this problem was part
