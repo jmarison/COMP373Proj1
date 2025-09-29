@@ -1,0 +1,83 @@
+ADR #1 - Mutable Rover with Cardinal Direction Enum and Grid Bounds
+
+    Status:
+      Proposed
+
+    Context:
+      We need a simple, readable domain model for a rover that moves on a rectangular plateau.  The rover must:
+         - Track position and facing (North, East, South, West)
+         - Turn left / right and move forward one grid cell
+         - Respect plateau boundaries
+
+    Decision:
+      - Represent facing as an enum Direction { North, East, South, West }
+      - Store position as integer coordinates x and y.
+      - Use a mutable Rover that updates its internal x and y direction when executing commands.
+      - Implement boolean canMove(int maxX, int maxY) inside Rover to check next cell validity against inclusive bounds
+        [0..maxX] x [0..maxY].
+      - Implement void move(int maxX, int maxY) that moves only if canMove (...) is true; otherwise no-op.
+      - Implement void turn(Turn dire) with Turn { LEFT, RIGHT }.
+
+    Consequences:
+      - Simple, readable code: enums for direction, integers for coordinates.
+      - Easy to test: unit tests can assert position/direction after each command.
+      - Clear responsibility split: domain logic in Rover, orchestration in Main.
+
+
+ADR #2 - Command Processing in Main; Fail-Soft Validation
+
+    Status:
+      Proposed
+
+    Context:
+      The Rover receives instruction strings (e.g., "LMLMRM").  We must parse and dispatch commands, apply plateau
+      constraints and decide how to handle invalid input (unknown characters or out-of-bounds moves).
+
+    Decision:
+      Parsing - Main iterates each char of the instruction string.
+        * 'L' --> rover.turn(LEFT)
+        * 'R' --> rover.turn(RIGHT)
+        * 'M' --> rover.move(maxX, maxY)
+
+      Bounds - Rover.move(...) enforces bounds; if the next step is outside [0..maxX] x [0..maxY], the move is ignored
+        (no-op).
+
+      Invalid Commands - Adopt a fail-soft policy...skip unknown characters (e.g., 'X') and optionally log/collect them
+        for reporting at the end.
+
+      Separation of Concerns - Main remains the orchestration layer (reading input, printing output).  Rover contains
+        only domain rules (turn, move, bounds check).  No I/O in Rover.
+
+    Consequences:
+      - Robust to noisy input.  Execution continues even if a few characters are invalid.
+      - Clear test strategy.  Golden tests for strings --> final (x, y, facing).
+      - Keeps domain pure an reusable (no console/file dependencies).
+
+
+ADR #3 - Swing UI Orchestrator in Main + Separation of Concerns (SoC)
+
+    Status:
+      Accepted
+
+    Context:
+      We need a simple, interactive way to:
+        * Enter plateau bounds, rover start state, and command sequence...
+        * Run the scenario and...
+        * Display results.
+      We want to keep domain logic (movement/turning/bounds) independent of I/O and UI so it's testable and reusable
+      (e.g., for a CLI or service later).
+
+    Decision:
+      - Use a lightweight Swing UI in Main as the presentation/orchestration layer.
+          * JFrame hosts input fields for plateau ("maxX maxY"), rover start ("x y D"), and commands ("LRM...").
+          * A Run button triggers parsing and execution.
+          * JTextArea displays results.
+      - Keep Rover free of UI and I/O; Main handles parsing, validation and result formatting.
+      - Main.executeCommands (Rover, String, int, int) iterates characters and delegates to rover.turn(...) / rover.move
+          (...).
+      - Plateau bounds are parsed in Main and passed as arguments to rover.move(maxX, maxY) (domain enforces bounds).
+
+    Consequences:
+      - Clear Separation of Concerns (SoC): Main = UI + orchestration; Rover = domain rules.
+      - Domain remains unit-testable without Swing.
+      - Easy to swap UI later (CLI, REST) without touching Rover.
