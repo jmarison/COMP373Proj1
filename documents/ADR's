@@ -1,7 +1,7 @@
-ADR #1 - Mutable Rover with Cardinal Direction Enum and Grid Bounds
+<h2>ADR #1 - Mutable Rover with Cardinal Direction Enum and Grid Bounds</h2>
 
-    Status:
-      Proposed
+<h3> Status: </h3>
+  <b>Proposed</b></br>
 
     Context:
       We need a simple, readable domain model for a rover that moves on a rectangular plateau.  The rover must:
@@ -23,11 +23,10 @@ ADR #1 - Mutable Rover with Cardinal Direction Enum and Grid Bounds
       - Easy to test: unit tests can assert position/direction after each command.
       - Clear responsibility split: domain logic in Rover, orchestration in Main.
 
+<h2>ADR #2 - Command Processing in Main; Fail-Soft Validation</h2>
 
-ADR #2 - Command Processing in Main; Fail-Soft Validation
-
-    Status:
-      Proposed
+<h3>Status:</h3>
+<b>Proposed</b> </br>
 
     Context:
       The Rover receives instruction strings (e.g., "LMLMRM").  We must parse and dispatch commands, apply plateau
@@ -54,10 +53,10 @@ ADR #2 - Command Processing in Main; Fail-Soft Validation
       - Keeps domain pure an reusable (no console/file dependencies).
 
 
-ADR #3 - Swing UI Orchestrator in Main + Separation of Concerns (SoC)
+<h2>ADR #3 - Swing UI Orchestrator in Main + Separation of Concerns (SoC)</h2>
 
-    Status:
-      Accepted
+ <h3>Status:</h3>
+ <b>Accepted</b> </br>
 
     Context:
       We need a simple, interactive way to:
@@ -81,3 +80,18 @@ ADR #3 - Swing UI Orchestrator in Main + Separation of Concerns (SoC)
       - Clear Separation of Concerns (SoC): Main = UI + orchestration; Rover = domain rules.
       - Domain remains unit-testable without Swing.
       - Easy to swap UI later (CLI, REST) without touching Rover.
+
+<h2>ADR #4 - Rover Intersecting Routes </h2>
+<h3>Status</h3>
+<b>Proposed</b>
+
+    Context:
+     - When a rover is progressing through the path, if it loops back and goes over where it has once been it creates two polygons at the Point.
+
+    Decision:
+      - Check the List to see if the point is already registered, if so skip the point.
+      - Make the circle (breadcrumb trail) smaller so that even if they do overlap, the triangle(Rover) will completely cover the circle
+
+    Consequences:
+      - If we just keep adding circles, eventually it could become a memory issue by having so many polygons.
+      - If removed from the path, it can be hard to discern the previous path of the robot.
